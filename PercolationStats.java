@@ -11,19 +11,19 @@ import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
 public class PercolationStats {
-    Percolation p;
-    double[] thresholds;
+    private final double[] thresholds;
+    private static final double CONFIDENCE_95 = 1.96;
 
     public PercolationStats(int n, int trials) {
         thresholds = new double[trials];
-        for(int i = 0; i < trials; i++) {
-            p = new Percolation(n);
+        for (int i = 0; i < trials; i++) {
+            Percolation p = new Percolation(n);
             while(!p.percolates()) {
                 int row = StdRandom.uniform(1, n+1);
                 int col = StdRandom.uniform(1, n+1);
                 p.open(row, col);
             }
-            thresholds[i] = p.numberOfOpenSites() / (n * n);
+            thresholds[i] = (double)p.numberOfOpenSites() / (n * n);
         }
     }
 
@@ -32,23 +32,23 @@ public class PercolationStats {
     }
 
     public double stddev() {
-        if(thresholds.length == 1) {
+        if (thresholds.length == 1) {
             return Double.NaN;
         }
         return StdStats.stddev(thresholds);
     }
 
     public double confidenceLo() {
-        return mean() - (1.96 * stddev() / Math.sqrt(thresholds.length));
+        return mean() - (CONFIDENCE_95 * stddev() / Math.sqrt(thresholds.length));
     }
 
     public double confidenceHi() {
-        return mean() + (1.96 * stddev() / Math.sqrt(thresholds.length));
+        return mean() + (CONFIDENCE_95 * stddev() / Math.sqrt(thresholds.length));
     }
 
     public static void main(String[] args) {
-        int n = StdIn.readInt();
-        int trials = StdIn.readInt();
+        int n = Integer.parseInt(args[0]);
+        int trials = Integer.parseInt(args[1]);
 
         PercolationStats ps = new PercolationStats(n, trials);
 

@@ -8,13 +8,14 @@
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
-    WeightedQuickUnionUF uf;
-    boolean[] openSites;
-    int openCount;
-    int gsize;
+    private final WeightedQuickUnionUF uf;
+    private final int gsize;
+    private boolean[] openSites;
+    private int openCount;
+
 
     public Percolation(int n) {
-        if(n <= 0) {
+        if (n <= 0) {
             throw new IllegalArgumentException("Invalid grid initialization size");
         }
         // We need to create the union find structure for two
@@ -25,7 +26,7 @@ public class Percolation {
         gsize = n;
 
         // Create the top and bottom virtual site connections.
-        for(int i = 1; i <= n; i++) {
+        for (int i = 1; i <= n; i++) {
             uf.union(0, i);
             uf.union(n * n + 1, (n-1) * n + i);
         }
@@ -34,29 +35,29 @@ public class Percolation {
     public void open(int row, int col) {
         validate(row, col);
 
-        if(!isOpen(row, col)) {
+        if (!isOpen(row, col)) {
             // Mark this opened.
             openSites[(row - 1) * gsize + col - 1] = true;
             openCount++;
 
             // Connect this site to the adjacent sites, if open.
             // Above.
-            if(row > 1 && isOpen(row - 1, col)) {
+            if (row > 1 && isOpen(row - 1, col)) {
                 uf.union((row - 1) * gsize + col, (row - 2) * gsize + col);
             }
 
             // Below.
-            if(row < gsize && isOpen(row + 1, col)) {
+            if (row < gsize && isOpen(row + 1, col)) {
                 uf.union((row - 1) * gsize + col, row * gsize + col);
             }
 
             // Left.
-            if(col > 1  && isOpen(row, col - 1)) {
+            if (col > 1  && isOpen(row, col - 1)) {
                 uf.union((row - 1) * gsize + col, (row - 1) * gsize + col - 1);
             }
 
             // Right.
-            if(col < gsize && isOpen(row, col + 1)) {
+            if (col < gsize && isOpen(row, col + 1)) {
                 uf.union((row - 1) * gsize + col, (row - 1) * gsize + col + 1);
             }
         }
@@ -83,7 +84,7 @@ public class Percolation {
     }
 
     private void validate(int row, int col) {
-        if(row <= 0 || row > gsize || col <= 0 || col > gsize) {
+        if (row <= 0 || row > gsize || col <= 0 || col > gsize) {
             throw new IllegalArgumentException("Invalid grid index, row: " + row + ", col: " + col);
         }
     }
